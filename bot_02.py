@@ -5,7 +5,7 @@ import requests
 from typing import Final
 from flask import Flask, request
 from telegram import Update, Bot, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import CommandHandler, MessageHandler, Filters, ContextTypes, Updater, CallbackContext, CallbackQueryHandler, Dispatcher
+from telegram.ext import CommandHandler, MessageHandler, Filters, ContextTypes, CallbackContext, CallbackQueryHandler, Dispatcher
 from bot_01 import search_movies, get_movie
 import os
 
@@ -16,12 +16,10 @@ bot = Bot(TOKEN)
 BOT_USERNAME: Final = '@JustForFun_04bot'
 
 # Commands
-#bot = telebot.TeleBot(TOKEN, parse_mode=None)
-@bot.message_handler(commands=['start'])
 def handle_start(message):
     bot.send_message(message.chat.id, "Hello! Thanks for messaging me.")
 
-def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     update.message.reply_text(f"Hello {update.message.from_user.first_name}! Welcome to Just For Fun Community. Thanks for messaging me. My username is {BOT_USERNAME}")
     update.message.reply_text("I'm a bot that helps you to interact with JustForFun Channel files.")
     update.message.reply_text(f"Download For Fun")
@@ -84,18 +82,7 @@ def contact(update, context):
         """
     )
 
-# Define a function to handle the /getfiles command
-def get_files(update: Update, context: CallbackContext):
-    chat_id = update.message.chat_id
-    messages = context.bot.get_chat_history(chat_id=chat_id, limit=10)  # Change the limit as needed
-
-    for message in messages:
-        if message.document:
-            file_id = message.document.file_id
-            file = context.bot.get_file(file_id)
-            file.download('downloaded_files/' + message.document.file_name)  # Save the file to a local directory
-
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_type: str = update.message.chat.type
     text: str = update.message.text
 
@@ -111,26 +98,17 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         response: str = handle_response(text)
 
     print('Bot:', response)
-    await update.message.reply_text(response)
-
-async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    print(f'Update {update} caused error {context.error}')
+    update.message.reply_text(response)
 
 def setup():
-    print('Starting BOt...')
     update_queue = Queue()
     dispatcher = Dispatcher(bot, update_queue, use_context=True)
-    dispatcher.add_handler(CommandHandler("start", start_command))
+    dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(MessageHandler(Filters.text, find_movie))
     dispatcher.add_handler(CallbackQueryHandler(movie_result))
-    dispatcher.add_handler(MessageHandler(Filters.document, get_files))
     dispatcher.add_handler(MessageHandler(Filters.contact, contact))
-    dispatcher.add_error_handler(error)
 
-    print('Pollling...')
-    app.run_polling(poll_interval=3)
-    return dispatcher
 
 app = Flask(__name__)
 
