@@ -23,31 +23,6 @@ def search_movies(query):
 
 def get_movie(query):
     movie_details = {}
-    file_path = f"{query}.txt"  # Assuming each movie has a separate text file with its details
-
-    try:
-        with open(file_path, 'r') as file:
-            lines = file.readlines()
-            movie_details["title"] = lines[0].strip()
-            movie_details["img"] = lines[1].strip()
-            links = {}
-            for line in lines[2:]:
-                parts = line.split(':')
-                links[parts[0].strip()] = parts[1].strip()
-            movie_details["links"] = links
-    except FileNotFoundError:
-        print(f"Movie details not found for: {query}")
-
-    return movie_details
-
-# Example usage
-movie_data = get_movie("movie_name")
-print(movie_data)
-
-
-'''
-def get_movie(query):
-    movie_details = {}
     movie_page_link = BeautifulSoup(requests.get(f"{url_list[query]}").text, "html.parser")
     if movie_page_link:
         title = movie_page_link.find("div", {'class': 'mvic-desc'}).h3.text
@@ -63,5 +38,3 @@ def get_movie(query):
             final_links[f"{i.text}"] = link['shortenedUrl']
         movie_details["links"] = final_links
     return movie_details
-
-'''
