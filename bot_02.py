@@ -21,10 +21,10 @@ BOT_USERNAME: Final = '@JustForFun_04bot'
 def handle_start(message):
     bot.send_message(message.chat.id, "Hello! Thanks for messaging me.")
 
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(f"Hello {update.message.from_user.first_name}! Welcome to Just For Fun Community. Thanks for messaging me. My username is {BOT_USERNAME}")
-    await update.message.reply_text("I'm a bot that helps you to interact with JustForFun Channel files.")
-    await update.message.reply_text(f"Download For Fun")
+def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    update.message.reply_text(f"Hello {update.message.from_user.first_name}! Welcome to Just For Fun Community. Thanks for messaging me. My username is {BOT_USERNAME}")
+    update.message.reply_text("I'm a bot that helps you to interact with JustForFun Channel files.")
+    update.message.reply_text(f"Download For Fun")
     update.message.reply_text(" Enter Movie Name : ")
 
 def find_movie(update, context):
@@ -58,11 +58,10 @@ def movie_result(update, context) -> None:
     else:
         query.message.reply_text(text=caption)
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Please type the file name correctly and if you want any file in specific language then please add the language name too with the file name. \nEx. 'Avatar Hindi' or 'Animal'.")
+def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    update.message.reply_text("Please type the file name correctly and if you want any file in specific language then please add the language name too with the file name. \nEx. 'Avatar Hindi' or 'Animal'.")
 
-async def custum_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("This is a custum command.")
+
 
 # Handle Logics
 # Define a function to handle responses from users
@@ -123,7 +122,6 @@ def setup():
     dispatcher = Dispatcher(bot, update_queue, use_context=True)
     dispatcher.add_handler(CommandHandler("start", start_command))
     dispatcher.add_handler(CommandHandler("help", help_command))
-    dispatcher.add_handler(CommandHandler("custum", custum_command))
     dispatcher.add_handler(MessageHandler(Filters.text, find_movie))
     dispatcher.add_handler(CallbackQueryHandler(movie_result))
     dispatcher.add_handler(MessageHandler(Filters.document, get_files))
